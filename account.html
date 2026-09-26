@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NovaMine — Account</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+min-height:100vh;
+font-family:Arial,sans-serif;
+color:#fff;
+background:
+radial-gradient(circle at 15% 10%,#00f7ff30,transparent 35%),
+radial-gradient(circle at 85% 90%,#9b00ff35,transparent 35%),
+linear-gradient(135deg,#02000c,#09001e,#001329);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.box{
+width:100%;
+max-width:430px;
+padding:28px;
+border:1px solid #ffffff18;
+border-radius:24px;
+background:#ffffff09;
+backdrop-filter:blur(20px);
+box-shadow:0 0 50px #0008;
+}
+
+.logo{
+text-align:center;
+font-size:34px;
+font-weight:900;
+color:#00f7ff;
+text-shadow:0 0 20px #00f7ff;
+margin-bottom:6px;
+}
+
+.sub{
+text-align:center;
+color:#999;
+font-size:14px;
+margin-bottom:25px;
+}
+
+.tabs{
+display:flex;
+gap:8px;
+margin-bottom:20px;
+}
+
+.tabs button{
+flex:1;
+padding:13px;
+border:0;
+border-radius:12px;
+font-weight:900;
+color:#999;
+background:#ffffff0d;
+}
+
+.tabs button.active{
+color:#000;
+background:#00f7ff;
+box-shadow:0 0 18px #00f7ff66;
+}
+
+.form{display:none}
+.form.active{display:block}
+
+input{
+width:100%;
+padding:15px;
+margin-bottom:13px;
+border:1px solid #ffffff18;
+border-radius:12px;
+outline:0;
+color:#fff;
+background:#0008;
+}
+
+input:focus{
+border-color:#00f7ff;
+box-shadow:0 0 12px #00f7ff22;
+}
+
+.main{
+width:100%;
+padding:15px;
+border:0;
+border-radius:12px;
+font-size:16px;
+font-weight:900;
+color:#000;
+background:linear-gradient(90deg,#00f7ff,#8b5cff);
+box-shadow:0 0 20px #00f7ff22;
+}
+
+.main:disabled{
+opacity:.55;
+}
+
+.ref{
+display:none;
+padding:12px;
+margin-bottom:14px;
+border-radius:12px;
+background:#00f7ff0d;
+border:1px solid #00f7ff22;
+color:#00f7ff;
+font-size:13px;
+text-align:center;
+}
+
+.msg{
+min-height:22px;
+margin-top:15px;
+text-align:center;
+font-size:14px;
+color:#ffd85c;
+}
+
+.note{
+margin-top:18px;
+text-align:center;
+font-size:12px;
+line-height:1.5;
+color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<div class="logo">⚡ NOVAMINE</div>
+
+<div class="sub">
+Secure mining account
+</div>
+
+<div class="tabs">
+<button id="loginTab" class="active">LOGIN</button>
+<button id="signupTab">SIGN UP</button>
+</div>
+
+<div id="refBox" class="ref"></div>
+
+<!-- LOGIN -->
+
+<div id="loginForm" class="form active">
+
+<input
+id="loginEmail"
+type="email"
+placeholder="Gmail"
+autocomplete="email">
+
+<input
+id="loginPassword"
+type="password"
+placeholder="Password"
+autocomplete="current-password">
+
+<button
+id="loginBtn"
+class="main">
+LOGIN
+</button>
+
+</div>
+
+<!-- SIGN UP -->
+
+<div id="signupForm" class="form">
+
+<input
+id="signupName"
+type="text"
+placeholder="Full name"
+autocomplete="name">
+
+<input
+id="signupEmail"
+type="email"
+placeholder="Gmail"
+autocomplete="email">
+
+<input
+id="signupPassword"
+type="password"
+placeholder="Password"
+autocomplete="new-password">
+
+<input
+id="signupConfirm"
+type="password"
+placeholder="Confirm password"
+autocomplete="new-password">
+
+<button
+id="signupBtn"
+class="main">
+CREATE ACCOUNT
+</button>
+
+</div>
+
+<div id="msg" class="msg"></div>
+
+<div class="note">
+NovaMine accounts are secured by Supabase.
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   NOVAMINE SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+"https://qrfpmqzeyuikplilbloi.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_2abwLSxLEvANWxXnxvmg2Q_HGln6tWx";
+
+const db =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const loginTab =
+document.getElementById("loginTab");
+
+const signupTab =
+document.getElementById("signupTab");
+
+const loginForm =
+document.getElementById("loginForm");
+
+const signupForm =
+document.getElementById("signupForm");
+
+const msg =
+document.getElementById("msg");
+
+const refBox =
+document.getElementById("refBox");
+
+
+/* =========================================================
+   REFERRAL
+   ========================================================= */
+
+const params =
+new URLSearchParams(location.search);
+
+const referralCode =
+(params.get("ref") || "").trim();
+
+if(referralCode){
+
+refBox.style.display="block";
+
+refBox.textContent =
+"🎁 You were invited to NovaMine by "+referralCode;
+
+}
+
+
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
+function showMessage(text){
+
+msg.textContent=text;
+
+}
+
+
+/* =========================================================
+   TAB SWITCHING
+   ========================================================= */
+
+loginTab.onclick=()=>{
+
+loginTab.classList.add("active");
+signupTab.classList.remove("active");
+
+loginForm.classList.add("active");
+signupForm.classList.remove("active");
+
+showMessage("");
+
+};
+
+
+signupTab.onclick=()=>{
+
+signupTab.classList.add("active");
+loginTab.classList.remove("active");
+
+signupForm.classList.add("active");
+loginForm.classList.remove("active");
+
+showMessage("");
+
+};
+
+
+/* =========================================================
+   SIGN UP
+   ========================================================= */
+
+document.getElementById("signupBtn").onclick=
+async()=>{
+
+const name =
+document.getElementById("signupName")
+.value.trim();
+
+const email =
+document.getElementById("signupEmail")
+.value.trim();
+
+const password =
+document.getElementById("signupPassword")
+.value;
+
+const confirm =
+document.getElementById("signupConfirm")
+.value;
+
+
+if(!name||!email||!password||!confirm){
+
+showMessage("Fill in all fields.");
+return;
+
+}
+
+
+if(!email.toLowerCase().endsWith("@gmail.com")){
+
+showMessage("Please use a Gmail address.");
+return;
+
+}
+
+
+if(password.length<8){
+
+showMessage("Password must be at least 8 characters.");
+return;
+
+}
+
+
+if(password!==confirm){
+
+showMessage("Passwords do not match.");
+return;
+
+}
+
+
+const button =
+document.getElementById("signupBtn");
+
+button.disabled=true;
+button.textContent="CREATING...";
+
+
+try{
+
+/*
+The referral code is placed in user metadata.
+The Supabase database trigger reads it and,
+when valid, rewards the inviter $0.50.
+*/
+
+const {data,error} =
+await db.auth.signUp({
+
+email:email,
+
+password:password,
+
+options:{
+data:{
+first_name:name.split(" ")[0] || name,
+last_name:name.split(" ").slice(1).join(" "),
+username:email.split("@")[0],
+referral_code:referralCode || null
+}
+}
+
+});
+
+
+if(error)throw error;
+
+
+/*
+If email confirmation is disabled,
+a session is returned immediately.
+*/
+
+if(data.session){
+
+showMessage("Account created successfully.");
+
+setTimeout(()=>{
+location.href="index.html";
+},700);
+
+}else{
+
+showMessage(
+"Account created. Check your email if confirmation is required."
+);
+
+}
+
+}catch(error){
+
+console.error(error);
+
+showMessage(
+error.message ||
+"Could not create account."
+);
+
+}finally{
+
+button.disabled=false;
+button.textContent="CREATE ACCOUNT";
+
+}
+
+};
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+document.getElementById("loginBtn").onclick=
+async()=>{
+
+const email =
+document.getElementById("loginEmail")
+.value.trim();
+
+const password =
+document.getElementById("loginPassword")
+.value;
+
+
+if(!email||!password){
+
+showMessage("Enter your Gmail and password.");
+return;
+
+}
+
+
+const button =
+document.getElementById("loginBtn");
+
+button.disabled=true;
+button.textContent="LOGGING IN...";
+
+
+try{
+
+const {data,error} =
+await db.auth.signInWithPassword({
+
+email:email,
+
+password:password
+
+});
+
+
+if(error)throw error;
+
+
+if(!data.session){
+
+throw new Error(
+"Login session was not created."
+);
+
+}
+
+
+showMessage("Login successful.");
+
+setTimeout(()=>{
+location.href="index.html";
+},500);
+
+
+}catch(error){
+
+console.error(error);
+
+showMessage(
+error.message ||
+"Login failed."
+);
+
+}finally{
+
+button.disabled=false;
+button.textContent="LOGIN";
+
+}
+
+};
+
+
+/* =========================================================
+   CHECK EXISTING SESSION
+   ========================================================= */
+
+(async()=>{
+
+try{
+
+const {data} =
+await db.auth.getSession();
+
+if(data.session){
+
+location.href="index.html";
+
+}
+
+}catch(error){
+
+console.error(error);
+
+}
+
+})();
+
+</script>
+
+</body>
+</html>
