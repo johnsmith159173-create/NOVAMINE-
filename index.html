@@ -8,1338 +8,1027 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0
+}
+
 body{
 font-family:Arial,sans-serif;
-background:#050816;
+background:
+radial-gradient(circle at top,#162b55 0,#07101f 45%,#030711 100%);
 color:#fff;
 min-height:100vh;
-overflow-x:hidden
+padding:15px
 }
-body:before{
-content:"";
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at 20% 20%,#172b70 0,transparent 30%),
-radial-gradient(circle at 80% 80%,#3d095c 0,transparent 30%);
-pointer-events:none
+
+.container{
+max-width:650px;
+margin:auto
 }
-.app{position:relative;z-index:1;max-width:1100px;margin:auto;padding-bottom:90px}
 
 header{
-padding:20px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-border-bottom:1px solid #26325c
+margin-bottom:18px
 }
+
 .logo{
 font-size:25px;
 font-weight:900;
-color:#00f5ff;
+color:#36f3ff;
 text-shadow:0 0 15px #00eaff
 }
-.status{
-font-size:12px;
-color:#62ff9b;
-background:#09251a;
-padding:8px 12px;
-border:1px solid #20ff82;
-border-radius:20px
-}
 
-main{padding:20px}
-
-.hero{text-align:center;padding:30px 10px 20px}
-.hero h1{
-font-size:38px;
-margin-bottom:10px;
-background:linear-gradient(90deg,#00f5ff,#9b5cff,#ff39c8);
--webkit-background-clip:text;
-color:transparent
+.logout{
+border:1px solid #ff4f75;
+background:#ff17441c;
+color:#ff6c8c;
+padding:9px 13px;
+border-radius:10px;
+cursor:pointer
 }
-.hero p{color:#9da9cc}
 
 .card{
-background:rgba(13,19,45,.88);
-border:1px solid #27376d;
-border-radius:20px;
-padding:20px;
-margin-bottom:18px;
-box-shadow:0 0 25px rgba(0,220,255,.07)
+background:#0c1729dd;
+border:1px solid #203758;
+border-radius:18px;
+padding:18px;
+margin-bottom:15px;
+box-shadow:0 0 20px #0006
 }
 
-.balance{text-align:center;padding:30px 20px}
-.balance small{color:#8e9abd}
-.balance h2{
-font-size:42px;
-color:#00f5ff;
-margin:10px 0;
-text-shadow:0 0 18px #00eaff
-}
-.balance span{color:#7d8aac;font-size:13px}
-
-.minebox{text-align:center}
-.minebox h3{margin-bottom:10px}
-.rate{color:#62ff9b;margin-bottom:20px}
-
-button{
-border:0;
-border-radius:14px;
-padding:14px 20px;
-color:#fff;
-font-weight:bold;
-cursor:pointer;
-font-size:15px;
-transition:.2s
-}
-button:active{transform:scale(.96)}
-
-.mineBtn{
-width:100%;
-background:linear-gradient(90deg,#00bfff,#6b4cff);
-box-shadow:0 0 20px #005eff66
-}
-.mineBtn.mining{
-background:linear-gradient(90deg,#ff4d7d,#ff9b32)
+.welcome{
+font-size:21px;
+font-weight:bold
 }
 
-.progress{
-height:9px;
-background:#111a38;
-border-radius:20px;
-margin-top:20px;
-overflow:hidden
-}
-.progress div{
-height:100%;
-width:0;
-background:linear-gradient(90deg,#00f5ff,#9b5cff,#ff39c8);
-transition:width:.3s
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px
-}
-.stat{
-text-align:center;
-padding:18px 8px;
-background:#0a1028;
-border-radius:15px;
-border:1px solid #202e5c
-}
-.stat b{
-display:block;
-color:#00f5ff;
-font-size:20px;
-margin-bottom:5px
-}
-.stat small{color:#8290b5}
-
-.miningStats{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
-margin-top:15px
-}
-.miningStat{
-background:#080e25;
-border:1px solid #202e58;
-border-radius:14px;
-padding:15px
-}
-.miningStat span{
-display:block;
-font-size:11px;
-color:#7584aa;
-margin-bottom:7px
-}
-.miningStat b{color:#fff;font-size:16px}
-
-nav{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:8px;
-margin-bottom:20px
-}
-.navBtn{
-background:#0b1230;
-border:1px solid #24335f;
-padding:12px 5px;
-font-size:12px
-}
-.navBtn.active{
-background:#17255b;
-border-color:#00eaff;
-color:#00f5ff
-}
-
-.page{display:none}
-.page.active{display:block}
-
-.upgrades{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px
-}
-.upgrade{
-background:#0a1028;
-border:1px solid #263566;
-border-radius:16px;
-padding:16px
-}
-.upgrade h4{color:#fff;margin-bottom:7px}
-.upgrade p{
-font-size:12px;
-color:#8592b5;
-margin-bottom:12px
-}
-.upgrade button{
-width:100%;
-background:linear-gradient(90deg,#773cff,#d52cff)
-}
-.upgrade button:disabled{
-opacity:.35;
-cursor:not-allowed
-}
-
-input,select{
-width:100%;
-padding:15px;
-margin:8px 0 14px;
-border-radius:12px;
-border:1px solid #2b3b70;
-background:#070d22;
-color:#fff;
-outline:none
-}
-input:focus,select:focus{
-border-color:#00eaff;
-box-shadow:0 0 12px #00eaff33
-}
-
-.action{
-width:100%;
-background:linear-gradient(90deg,#00bfff,#00d98b);
+.sub{
+color:#8ea5c5;
+font-size:13px;
 margin-top:5px
 }
 
-.warning{
-color:#ffc857;
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px
+}
+
+.stat{
+background:#091322;
+border:1px solid #1c3454;
+border-radius:14px;
+padding:14px
+}
+
+.label{
 font-size:12px;
-margin-top:10px;
-line-height:1.5
+color:#8298b7;
+margin-bottom:7px
 }
 
-.history{margin-top:15px}
-.historyItem{
-padding:14px;
-background:#080e25;
-border:1px solid #202e58;
-border-radius:12px;
-margin-top:8px;
-font-size:13px
-}
-.pending{color:#ffc857}
-.approved,.paid{color:#55ff9a}
-.rejected{color:#ff6688}
-
-.toast{
-position:fixed;
-bottom:85px;
-left:50%;
-transform:translateX(-50%) translateY(20px);
-background:#101936;
-border:1px solid #00eaff;
-padding:13px 18px;
-border-radius:12px;
-opacity:0;
-pointer-events:none;
-transition:.3s;
-z-index:20;
-box-shadow:0 0 20px #00eaff33
-}
-.toast.show{
-opacity:1;
-transform:translateX(-50%) translateY(0)
+.value{
+font-size:20px;
+font-weight:bold;
+color:#48f4ff;
+word-break:break-word
 }
 
-.bottom{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:#070c20ee;
-backdrop-filter:blur(10px);
-border-top:1px solid #202d57;
-padding:10px;
+.mining{
 text-align:center;
-color:#66759c;
-font-size:11px;
-z-index:10
+padding:22px
 }
 
-@media(max-width:650px){
-.hero h1{font-size:31px}
-.balance h2{font-size:34px}
-.stats{grid-template-columns:1fr}
-.miningStats{grid-template-columns:1fr}
-.upgrades{grid-template-columns:1fr}
-nav{grid-template-columns:repeat(4,1fr)}
+.mining-icon{
+font-size:55px;
+margin-bottom:8px;
+filter:drop-shadow(0 0 15px #00eaff)
+}
+
+.timer{
+font-size:31px;
+font-weight:900;
+color:#fff;
+margin:10px 0
+}
+
+.earn{
+font-size:23px;
+font-weight:bold;
+color:#42ff9b;
+text-shadow:0 0 10px #00ff8c
+}
+
+button{
+border:0;
+cursor:pointer;
+font-weight:bold;
+border-radius:12px;
+padding:13px 16px;
+font-size:14px
+}
+
+.primary{
+background:linear-gradient(135deg,#00d9ff,#476cff);
+color:#fff;
+box-shadow:0 0 18px #00d9ff55
+}
+
+.success{
+background:linear-gradient(135deg,#00e88b,#00a96d);
+color:#fff
+}
+
+.warning{
+background:linear-gradient(135deg,#ffc400,#ff7600);
+color:#111
+}
+
+.danger{
+background:linear-gradient(135deg,#ff416c,#c2185b);
+color:#fff
+}
+
+button:disabled{
+opacity:.45;
+cursor:not-allowed
+}
+
+.actions{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-top:16px
+}
+
+.section-title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:13px
+}
+
+.worker{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+padding:13px;
+margin-bottom:9px;
+background:#091322;
+border:1px solid #1b3454;
+border-radius:13px
+}
+
+.worker-name{
+font-weight:bold
+}
+
+.worker-info{
+font-size:12px;
+color:#849bb9;
+margin-top:4px
+}
+
+.refbox{
+background:#07111f;
+border:1px dashed #27dfff;
+padding:13px;
+border-radius:13px;
+word-break:break-all;
+color:#52efff;
+font-size:13px;
+margin-bottom:10px
+}
+
+.form{
+display:grid;
+gap:10px
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:11px;
+border:1px solid #294565;
+background:#07111f;
+color:#fff;
+outline:none
+}
+
+input:focus{
+border-color:#32eaff;
+box-shadow:0 0 10px #00d9ff33
+}
+
+.row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:9px
+}
+
+.message{
+margin-top:10px;
+padding:10px;
+border-radius:10px;
+font-size:13px;
+display:none
+}
+
+.loading{
+text-align:center;
+padding:50px 10px;
+color:#8fa8c8
+}
+
+.small{
+font-size:12px;
+color:#8298b7;
+margin-top:7px
+}
+
+.badge{
+display:inline-block;
+padding:5px 9px;
+border-radius:20px;
+background:#00eaff18;
+border:1px solid #00eaff55;
+color:#52efff;
+font-size:11px
+}
+
+@media(max-width:480px){
+.actions{
+grid-template-columns:1fr
+}
+
+.grid{
+grid-template-columns:1fr 1fr
+}
+
+.worker{
+align-items:flex-start
+}
+
+.row{
+grid-template-columns:1fr
+}
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
-
-<header>
-<div class="logo">⚡ NOVAMINE</div>
-<div class="status" id="onlineStatus">● MINING ONLINE</div>
-</header>
-
-<main>
-
-<section class="hero">
-<h1>Crypto Mining Simulator</h1>
-<p>Mine • Upgrade • Convert • Withdraw</p>
-</section>
-
-<nav>
-<button class="navBtn active" onclick="page('home',this)">⛏️ Mine</button>
-<button class="navBtn" onclick="page('upgrade',this)">⚡ Upgrade</button>
-<button class="navBtn" onclick="page('convert',this)">🔄 Convert</button>
-<button class="navBtn" onclick="page('withdraw',this)">💸 Withdraw</button>
-</nav>
-
-<section id="home" class="page active">
-
-<div class="card balance">
-<small>MINING BALANCE</small>
-<h2 id="balance">$0.000000</h2>
-<span>Available mining rewards</span>
-</div>
-
-<div class="card minebox">
-
-<h3>⛏️ Mining Engine</h3>
-
-<div class="rate">
-Hashrate:
-<b id="hashrate">5.00 MH/s</b>
-&nbsp; • &nbsp;
-Efficiency:
-<b id="efficiency">98%</b>
-</div>
-
-<button id="mineBtn" class="mineBtn" onclick="toggleMining()">
-START MINING
-</button>
-
-<div class="progress">
-<div id="progress"></div>
-</div>
-
-<p id="timer" class="warning">
-Mining is currently stopped.
-</p>
-
-<div class="miningStats">
-
-<div class="miningStat">
-<span>NETWORK HASHRATE</span>
-<b id="networkHash">1.00 TH/s</b>
-</div>
-
-<div class="miningStat">
-<span>NETWORK DIFFICULTY</span>
-<b id="difficulty">2.50 T</b>
-</div>
-
-<div class="miningStat">
-<span>SHARES</span>
-<b id="shares">0</b>
-</div>
-
-<div class="miningStat">
-<span>ACCEPTED SHARES</span>
-<b id="accepted">0</b>
-</div>
-
-<div class="miningStat">
-<span>REJECTED SHARES</span>
-<b id="rejected">0</b>
-</div>
-
-<div class="miningStat">
-<span>UPTIME</span>
-<b id="uptime">00:00:00</b>
-</div>
-
-</div>
-
-</div>
-
-<div class="stats">
-
-<div class="stat">
-<b id="total">0.000000</b>
-<small>Total Mined</small>
-</div>
-
-<div class="stat">
-<b id="worker">1</b>
-<small>Worker Power</small>
-</div>
-
-<div class="stat">
-<b id="cycles">0</b>
-<small>Mining Cycles</small>
-</div>
-
-</div>
-
-</section>
-
-<section id="upgrade" class="page">
-
-<div class="card">
-<h2>⚡ Worker Power</h2>
-<p class="warning">
-Increase hashrate and mining performance by upgrading your worker.
-</p>
-</div>
-
-<div id="upgrades" class="upgrades"></div>
-
-</section>
-
-<section id="convert" class="page">
-
-<div class="card">
-
-<h2>🔄 Convert Mining</h2>
-
-<p class="warning">
-Convert your mining balance into supported crypto assets.
-</p>
-
-<label>Amount in USD</label>
-
-<input
-id="convertAmount"
-type="number"
-min="0"
-step="0.000001"
-placeholder="Enter amount"
->
-
-<label>Currency</label>
-
-<select id="convertCurrency">
-<option value="USDT">USDT</option>
-<option value="USDC">USDC</option>
-<option value="SOL">SOL</option>
-<option value="BTC">BTC</option>
-</select>
-
-<button class="action" onclick="convert()">
-CONVERT
-</button>
-
-<p id="convertResult" class="warning"></p>
-
-</div>
-
-</section>
-
-<section id="withdraw" class="page">
-
-<div class="card">
-
-<h2>💸 Withdraw</h2>
-
-<p class="warning">
-Minimum withdrawal: $3.00
-</p>
-
-<label>Amount</label>
-
-<input
-id="withdrawAmount"
-type="number"
-min="3"
-step="0.01"
-placeholder="Minimum $3"
->
-
-<label>Currency</label>
-
-<select id="withdrawCurrency">
-<option value="USDT">USDT</option>
-<option value="USDC">USDC</option>
-<option value="SOL">SOL</option>
-<option value="BTC">BTC</option>
-</select>
-
-<label>Wallet Address</label>
-
-<input
-id="wallet"
-type="text"
-placeholder="Enter wallet address"
->
-
-<button class="action" onclick="withdraw()">
-SUBMIT WITHDRAWAL
-</button>
-
-<div id="withdrawResult" class="warning"></div>
-
-</div>
-
-<div class="card">
-
-<h3>📜 Withdrawal History</h3>
-
-<div id="history" class="history">
-No withdrawal requests yet.
-</div>
-
-</div>
-
-</section>
-
-</main>
-</div>
-
-<div id="toast" class="toast"></div>
-
-<div class="bottom">
-NovaMine Mining Simulator • Demo Environment
+<div class="container" id="app">
+<div class="loading">Loading NovaMine...</div>
 </div>
 
 <script>
+const SUPABASE_URL =
+"https://qrfpmqzeyuikplilbloi.supabase.co";
 
-const SUPABASE_URL=
-"https://wwuaxvblguybebaipybm.supabase.co";
+const SUPABASE_KEY =
+"sb_publishable_2abwLSxLEvANWxXnxvmg2Q_HGln6tWx";
 
-const SUPABASE_KEY=
-"sb_publishable_Ava4Ca6uBUSoIbgNQyK6ZQ__LqBWcSF";
-
-const db=window.supabase.createClient(
+const db =
+supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
 
-const BASE_HASHRATE=5;
-const NETWORK_HASHRATE=1000000;
-const NETWORK_DIFFICULTY=2500000000000;
-const BLOCK_REWARD_USD=3.125;
-const SHARE_INTERVAL=10;
-const EFFICIENCY=.98;
+let user=null;
+let profile=null;
+let wallet=null;
+let timer=null;
 
-let balance=Number(localStorage.getItem("nova_balance")||0);
-let total=Number(localStorage.getItem("nova_total")||0);
-let power=Number(localStorage.getItem("nova_power")||1);
-let cycles=Number(localStorage.getItem("nova_cycles")||0);
-let shares=Number(localStorage.getItem("nova_shares")||0);
-let accepted=Number(localStorage.getItem("nova_accepted")||0);
-let rejected=Number(localStorage.getItem("nova_rejected")||0);
-let uptime=Number(localStorage.getItem("nova_uptime")||0);
-
-let mining=
-localStorage.getItem("nova_mining")==="true";
-
-let seconds=
-Number(localStorage.getItem("nova_seconds")||0);
-
-let lastMiningTime=
-Number(localStorage.getItem("nova_last_time")||0);
-
-let interval=null;
-
-function getHashrate(){
-return BASE_HASHRATE*power;
-}
-
-function rewardPerSecond(){
-
-const contribution=
-getHashrate()/NETWORK_HASHRATE;
-
-const reward=
-BLOCK_REWARD_USD*
-contribution*
-EFFICIENCY;
-
-return reward/60;
-}
-
-function shareQuality(){
-
-const base=
-getHashrate()/NETWORK_HASHRATE;
-
-const difficultyFactor=
-NETWORK_DIFFICULTY/1000000000000;
-
-return Math.min(
-.999,
-Math.max(
-.5,
-EFFICIENCY-
-(base*difficultyFactor*.001)
-)
-);
-}
-
-function saveMining(){
-
-localStorage.setItem("nova_balance",balance);
-localStorage.setItem("nova_total",total);
-localStorage.setItem("nova_power",power);
-localStorage.setItem("nova_cycles",cycles);
-localStorage.setItem("nova_shares",shares);
-localStorage.setItem("nova_accepted",accepted);
-localStorage.setItem("nova_rejected",rejected);
-localStorage.setItem("nova_uptime",uptime);
-localStorage.setItem("nova_mining",mining);
-localStorage.setItem("nova_seconds",seconds);
-
-if(mining){
-localStorage.setItem(
-"nova_last_time",
-lastMiningTime||Date.now()
-);
-}else{
-localStorage.setItem("nova_last_time",0);
-}
-
-}
-
-function applyMiningElapsed(now=Date.now()){
-
-if(!mining||!lastMiningTime)return;
-
-let elapsed=
-Math.floor((now-lastMiningTime)/1000);
-
-if(elapsed<=0)return;
-
-elapsed=Math.min(elapsed,86400);
-
-const reward=
-rewardPerSecond()*elapsed;
-
-balance+=reward;
-total+=reward;
-
-const oldUptime=uptime;
-
-uptime+=elapsed;
-
-const oldShareBlock=
-Math.floor(oldUptime/SHARE_INTERVAL);
-
-const newShareBlock=
-Math.floor(uptime/SHARE_INTERVAL);
-
-const generatedShares=
-Math.max(
-0,
-newShareBlock-oldShareBlock
-);
-
-if(generatedShares>0){
-
-shares+=generatedShares;
-
-const newAccepted=
-Math.round(
-generatedShares*shareQuality()
-);
-
-accepted+=newAccepted;
-
-rejected+=
-generatedShares-newAccepted;
-
-}
-
-let remaining=
-seconds>0?seconds:60;
-
-remaining-=elapsed;
-
-while(remaining<=0){
-
-cycles++;
-
-remaining+=60;
-
-}
-
-seconds=remaining;
-
-lastMiningTime=now;
-
-saveMining();
-
-}
+const app=document.getElementById("app");
 
 function money(n){
-return "$"+Number(n).toFixed(6);
+return Number(n||0).toFixed(4);
 }
 
-function formatUptime(s){
-
-s=Math.floor(s);
-
-const h=Math.floor(s/3600);
-const m=Math.floor((s%3600)/60);
-const sec=s%60;
-
-return String(h).padStart(2,"0")+":"+
-String(m).padStart(2,"0")+":"+
-String(sec).padStart(2,"0");
-
+function esc(v){
+return String(v??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;");
 }
 
-function updateMiningUI(){
+function showMessage(text,type="info"){
+const el=document.getElementById("message");
+if(!el)return;
 
-document.getElementById("balance")
-.textContent=money(balance);
+el.textContent=text;
+el.style.display="block";
 
-document.getElementById("total")
-.textContent=
-Number(total).toFixed(6);
-
-document.getElementById("worker")
-.textContent=power;
-
-document.getElementById("cycles")
-.textContent=cycles;
-
-document.getElementById("hashrate")
-.textContent=
-getHashrate().toFixed(2)+" MH/s";
-
-document.getElementById("efficiency")
-.textContent=
-(EFFICIENCY*100).toFixed(0)+"%";
-
-document.getElementById("networkHash")
-.textContent="1.00 TH/s";
-
-document.getElementById("difficulty")
-.textContent="2.50 T";
-
-document.getElementById("shares")
-.textContent=shares;
-
-document.getElementById("accepted")
-.textContent=accepted;
-
-document.getElementById("rejected")
-.textContent=rejected;
-
-document.getElementById("uptime")
-.textContent=
-formatUptime(uptime);
-
-if(mining){
-
-const percent=
-((60-seconds)/60)*100;
-
-document.getElementById("progress")
-.style.width=
-Math.max(0,Math.min(100,percent))+"%";
-
-document.getElementById("timer")
-.textContent=
-"Next cycle in "+
-seconds+
-" seconds";
-
+if(type==="error"){
+el.style.background="#ff174425";
+el.style.color="#ff7691";
 }else{
-
-document.getElementById("progress")
-.style.width="0%";
-
-document.getElementById("timer")
-.textContent=
-"Mining is currently stopped.";
-
+el.style.background="#00eaff18";
+el.style.color="#65f4ff";
+}
 }
 
-renderUpgrades();
+function getMiningAmount(){
+if(!wallet)return 0;
 
-}
+let saved=Number(wallet.mining_balance||0);
 
-  function toggleMining(){
+if(!wallet.mining_started_at)
+return saved;
 
-if(mining){
-stopMining();
-}else{
-startMining();
-}
+const started=
+new Date(wallet.mining_started_at).getTime();
 
-}
-
-function startMining(){
-
-if(mining)return;
-
-mining=true;
-
-if(seconds<=0){
-seconds=60;
-}
-
-lastMiningTime=Date.now();
-
-document.getElementById("mineBtn")
-.textContent="STOP MINING";
-
-document.getElementById("mineBtn")
-.classList.add("mining");
-
-document.getElementById("onlineStatus")
-.textContent="● MINER ACTIVE";
-
-document.getElementById("timer")
-.textContent=
-"Mining active... calculating shares.";
-
-clearInterval(interval);
-
-interval=
-setInterval(miningTick,1000);
-
-saveMining();
-
-updateMiningUI();
-
-toast("⛏️ Mining started!");
-
-}
-
-
-/* =====================================
-   STOP
-===================================== */
-
-function stopMining(){
-
-if(!mining)return;
-
-applyMiningElapsed(Date.now());
-
-mining=false;
-
-clearInterval(interval);
-interval=null;
-
-document.getElementById("mineBtn")
-.textContent="START MINING";
-
-document.getElementById("mineBtn")
-.classList.remove("mining");
-
-document.getElementById("onlineStatus")
-.textContent="● MINING ONLINE";
-
-document.getElementById("timer")
-.textContent=
-"Mining is currently stopped.";
-
-saveMining();
-
-updateMiningUI();
-
-toast("Mining stopped.");
-
-}
-
-
-/* =====================================
-   LIVE TICK
-===================================== */
-
-function miningTick(){
-
-if(!mining)return;
-
-applyMiningElapsed(Date.now());
-
-updateMiningUI();
-
-}
-
-
-/* =====================================
-   RESTORE
-===================================== */
-
-function restoreMining(){
-
-if(mining){
-
-applyMiningElapsed(Date.now());
-
-document.getElementById("mineBtn")
-.textContent="STOP MINING";
-
-document.getElementById("mineBtn")
-.classList.add("mining");
-
-document.getElementById("onlineStatus")
-.textContent="● MINER ACTIVE";
-
-clearInterval(interval);
-
-interval=
-setInterval(miningTick,1000);
-
-}
-
-updateMiningUI();
-
-}
-
-
-/* =====================================
-   PAGE VISIBILITY
-===================================== */
-
-document.addEventListener(
-"visibilitychange",
-function(){
-
-if(document.visibilityState==="visible"&&mining){
-
-applyMiningElapsed(Date.now());
-
-updateMiningUI();
-
-}
-
-}
+let seconds=
+Math.max(
+0,
+Math.floor((Date.now()-started)/1000)
 );
 
+seconds=Math.min(seconds,86400);
 
-/* =====================================
-   BEFORE LEAVING
-===================================== */
+const power=
+Number(wallet.worker_power||0);
 
-window.addEventListener(
-"beforeunload",
-function(){
-
-if(mining){
-
-applyMiningElapsed(Date.now());
-
+return saved+(seconds*0.00005*power);
 }
 
-}
+function formatTime(){
+if(!wallet || !wallet.mining_started_at)
+return "00:00:00";
+
+let seconds=
+Math.max(
+0,
+Math.floor(
+(Date.now()-new Date(wallet.mining_started_at).getTime())/1000
+)
 );
 
+seconds=Math.min(seconds,86400);
 
-/* =====================================
-   UPGRADES
-===================================== */
+const h=String(Math.floor(seconds/3600)).padStart(2,"0");
+const m=String(Math.floor((seconds%3600)/60)).padStart(2,"0");
+const s=String(seconds%60).padStart(2,"0");
 
-const upgradeData=[
-[2,.01],
-[3,.03],
-[4,.08],
-[5,.15],
-[10,.50],
-[25,1.50],
-[50,5],
-[100,15]
-];
-
-
-function renderUpgrades(){
-
-const box=
-document.getElementById("upgrades");
-
-if(!box)return;
-
-box.innerHTML="";
-
-upgradeData.forEach(x=>{
-
-const level=x[0];
-const price=x[1];
-
-const div=
-document.createElement("div");
-
-div.className="upgrade";
-
-div.innerHTML=`
-
-<h4>⚡ Worker Power ${level}</h4>
-
-<p>
-Hashrate:
-${(BASE_HASHRATE*level).toFixed(2)}
-MH/s
-</p>
-
-<p>
-Efficiency:
-98%
-</p>
-
-<button
-${power>=level||balance<price?"disabled":""}
-onclick="upgrade(${level},${price})">
-
-${power>=level
-?"ACTIVE"
-:"Upgrade • $"+price}
-
-</button>
-
-`;
-
-box.appendChild(div);
-
-});
-
+return `${h}:${m}:${s}`;
 }
 
+function referralLink(){
+if(!profile?.ref_code)return "";
 
-function upgrade(level,price){
-
-if(mining){
-applyMiningElapsed(Date.now());
+return new URL(
+"account.html?ref="+
+encodeURIComponent(profile.ref_code),
+location.href
+).href;
 }
 
-if(power>=level){
+async function loadUser(){
 
-toast("Already upgraded.");
+const {data:{user:currentUser}}=
+await db.auth.getUser();
+
+if(!currentUser){
+location.href="account.html";
 return;
-
 }
 
-if(balance<price){
+user=currentUser;
 
-toast("Not enough mining balance.");
+const [p,w]=await Promise.all([
+
+db.from("profiles")
+.select("*")
+.eq("id",user.id)
+.single(),
+
+db.from("wallets")
+.select("*")
+.eq("user_id",user.id)
+.single()
+
+]);
+
+if(p.error){
+console.error(p.error);
+app.innerHTML=
+`<div class="card">
+<h3>Profile error</h3>
+<p class="small">${esc(p.error.message)}</p>
+</div>`;
 return;
-
 }
 
-balance-=price;
-power=level;
-
-saveMining();
-updateMiningUI();
-
-toast("⚡ Worker upgraded!");
-
-}
-
-
-/* =====================================
-   NAVIGATION
-===================================== */
-
-function page(id,btn){
-
-document.querySelectorAll(".page")
-.forEach(x=>
-x.classList.remove("active")
-);
-
-document.getElementById(id)
-.classList.add("active");
-
-document.querySelectorAll(".navBtn")
-.forEach(x=>
-x.classList.remove("active")
-);
-
-btn.classList.add("active");
-
-if(id==="withdraw"){
-loadHistory();
-}
-
-}
-
-
-/* =====================================
-   TOAST
-===================================== */
-
-function toast(message){
-
-const t=
-document.getElementById("toast");
-
-t.textContent=message;
-
-t.classList.add("show");
-
-setTimeout(()=>{
-t.classList.remove("show");
-},2500);
-
-}
-
-
-/* =====================================
-   CONVERSION
-===================================== */
-
-const rates={
-USDT:1,
-USDC:1,
-SOL:140,
-BTC:110000
-};
-
-
-function convert(){
-
-if(mining){
-applyMiningElapsed(Date.now());
-}
-
-const amount=Number(
-document.getElementById(
-"convertAmount"
-).value
-);
-
-const currency=
-document.getElementById(
-"convertCurrency"
-).value;
-
-const result=
-document.getElementById(
-"convertResult"
-);
-
-
-if(!amount||amount<=0){
-
-result.textContent=
-"Enter a valid amount.";
-
+if(w.error){
+console.error(w.error);
+app.innerHTML=
+`<div class="card">
+<h3>Wallet error</h3>
+<p class="small">${esc(w.error.message)}</p>
+</div>`;
 return;
-
 }
 
+profile=p.data;
+wallet=w.data;
 
-if(amount>balance){
-
-result.textContent=
-"Insufficient mining balance.";
-
-return;
-
+render();
+startDisplayTimer();
 }
 
+function render(){
 
-const received=
-amount/rates[currency];
+const mining=
+Boolean(wallet.mining_started_at);
 
-balance-=amount;
+const miningAmount=
+getMiningAmount();
 
-saveMining();
-updateMiningUI();
+const link=
+referralLink();
 
-result.textContent=
-"Converted $"+
-amount.toFixed(6)+
-" → "+
-received.toFixed(8)+
-" "+
-currency;
+app.innerHTML=`
 
-document.getElementById(
-"convertAmount"
-).value="";
+<header>
+<div class="logo">⚡ NovaMine</div>
+<button class="logout" onclick="logout()">Logout</button>
+</header>
 
-toast("🔄 Conversion completed.");
+<div class="card">
+<div class="welcome">
+Welcome, ${esc(profile.display_name||profile.first_name||"Miner")} 👋
+</div>
+<div class="sub">
+@${esc(profile.username||user.email?.split("@")[0]||"miner")}
+</div>
+</div>
 
-  }
+<div class="grid">
 
-  function withdraw(){
+<div class="stat">
+<div class="label">MINING BALANCE</div>
+<div class="value" id="miningBalance">
+${money(miningAmount)} NOVA
+</div>
+</div>
 
-if(mining){
-applyMiningElapsed(Date.now());
-}
+<div class="stat">
+<div class="label">NOVA BALANCE</div>
+<div class="value">
+${money(wallet.nova_balance)} NOVA
+</div>
+</div>
 
-const amount=Number(
-document.getElementById(
-"withdrawAmount"
-).value
-);
+<div class="stat">
+<div class="label">USDT BALANCE</div>
+<div class="value">
+$${money(wallet.usdt_balance)}
+</div>
+</div>
 
-const currency=
-document.getElementById(
-"withdrawCurrency"
-).value;
-
-const wallet=
-document.getElementById(
-"wallet"
-).value.trim();
-
-const result=
-document.getElementById(
-"withdrawResult"
-);
-
-
-if(!amount||amount<3){
-
-result.textContent=
-"Minimum withdrawal is $3.00.";
-
-return;
-
-}
-
-
-if(amount>balance){
-
-result.textContent=
-"Insufficient mining balance.";
-
-return;
-
-}
-
-
-if(wallet.length<8){
-
-result.textContent=
-"Enter a valid wallet address.";
-
-return;
-
-}
-
-
-const request={
-id:Date.now(),
-amount,
-currency,
-wallet,
-status:"pending",
-created_at:new Date().toISOString()
-};
-
-
-let history=
-JSON.parse(
-localStorage.getItem("nova_withdrawals")||"[]"
-);
-
-history.unshift(request);
-
-localStorage.setItem(
-"nova_withdrawals",
-JSON.stringify(history)
-);
-
-balance-=amount;
-
-saveMining();
-
-updateMiningUI();
-
-document.getElementById(
-"withdrawAmount"
-).value="";
-
-document.getElementById(
-"wallet"
-).value="";
-
-result.textContent=
-"Withdrawal request submitted successfully.";
-
-loadHistory();
-
-toast("💸 Withdrawal submitted.");
-
-}
-
-
-/* =====================================
-   HISTORY
-===================================== */
-
-function loadHistory(){
-
-const historyBox=
-document.getElementById("history");
-
-const history=
-JSON.parse(
-localStorage.getItem("nova_withdrawals")||"[]"
-);
-
-if(!history.length){
-
-historyBox.textContent=
-"No withdrawal requests yet.";
-
-return;
-
-}
-
-historyBox.innerHTML=
-history.map(x=>`
-
-<div class="historyItem">
-
-<b>
-${x.amount} ${x.currency}
-</b>
-
-<br>
-
-<span class="${x.status}">
-${x.status.toUpperCase()}
-</span>
-
-<br>
-
-<small>
-${new Date(x.created_at).toLocaleString()}
-</small>
+<div class="stat">
+<div class="label">WORKER POWER</div>
+<div class="value">
+${Number(wallet.worker_power||0)} ⚡
+</div>
+</div>
 
 </div>
 
-`).join("");
+<div class="card mining">
 
+<div class="mining-icon">⛏️</div>
+
+<div class="badge">
+${mining ? "● MINING ACTIVE" : "● MINING STOPPED"}
+</div>
+
+<div class="timer" id="timer">
+${formatTime()}
+</div>
+
+<div class="earn" id="liveEarn">
+${money(miningAmount)} NOVA
+</div>
+
+<div class="small">
+Mining rate: ${Number(wallet.worker_power||0)*0.00005} NOVA/sec
+</div>
+
+<div class="actions">
+
+<button
+class="primary"
+id="startBtn"
+onclick="startMining()"
+${mining?"disabled":""}>
+▶ Start
+</button>
+
+<button
+class="danger"
+id="stopBtn"
+onclick="stopMining()"
+${!mining?"disabled":""}>
+■ Stop
+</button>
+
+<button
+class="success"
+onclick="claimMining()">
+💰 Claim
+</button>
+
+</div>
+
+<div id="message" class="message"></div>
+
+</div>
+
+<div class="card">
+
+<div class="section-title">
+⚡ Worker Power
+</div>
+
+<div class="worker">
+<div>
+<div class="worker-name">Basic Worker</div>
+<div class="worker-info">+1 Power • Cost 0.5 NOVA</div>
+</div>
+<button class="warning" onclick="upgrade(1)">
+Upgrade
+</button>
+</div>
+
+<div class="worker">
+<div>
+<div class="worker-name">Power Worker</div>
+<div class="worker-info">+3 Power • Cost 1.5 NOVA</div>
+</div>
+<button class="warning" onclick="upgrade(2)">
+Upgrade
+</button>
+</div>
+
+<div class="worker">
+<div>
+<div class="worker-name">Diamond Worker</div>
+<div class="worker-info">+10 Power • Cost 5 NOVA</div>
+</div>
+<button class="warning" onclick="upgrade(3)">
+Upgrade
+</button>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="section-title">
+🔄 Convert NOVA → USDT
+</div>
+
+<div class="form">
+
+<input
+id="convertAmount"
+type="number"
+step="any"
+min="0"
+placeholder="Enter NOVA amount">
+
+<button
+class="success"
+onclick="convertNOVA()">
+Convert to USDT
+</button>
+
+</div>
+
+<div class="small">
+Your available NOVA balance: ${money(wallet.nova_balance)} NOVA
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="section-title">
+💸 Withdraw USDT
+</div>
+
+<div class="form">
+
+<input
+id="withdrawAmount"
+type="number"
+step="any"
+min="3"
+placeholder="Minimum $3">
+
+<input
+id="withdrawWallet"
+type="text"
+placeholder="USDT wallet address">
+
+<button
+class="primary"
+onclick="withdrawUSDT()">
+Request Withdrawal
+</button>
+
+</div>
+
+<div class="small">
+Minimum withdrawal: $3 USDT
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="section-title">
+🎁 Invite & Earn
+</div>
+
+<div class="grid">
+
+<div class="stat">
+<div class="label">REFERRALS</div>
+<div class="value">
+${Number(profile.referrals||0)}
+</div>
+</div>
+
+<div class="stat">
+<div class="label">EARNINGS</div>
+<div class="value">
+$${money(profile.referral_earnings)}
+</div>
+</div>
+
+</div>
+
+<div style="margin-top:14px">
+
+<div class="label">
+YOUR INVITE LINK
+</div>
+
+<div class="refbox" id="refLink">
+${esc(link)}
+</div>
+
+<button
+class="primary"
+onclick="copyReferral()"
+style="width:100%">
+📋 Copy Invite Link
+</button>
+
+</div>
+
+<div class="small">
+Earn $0.50 when someone joins using your referral link.
+</div>
+
+</div>
+`;
 }
 
+function startDisplayTimer(){
 
-/* =====================================
-   INITIALIZE
-===================================== */
+clearInterval(timer);
 
-restoreMining();
+timer=setInterval(()=>{
 
+if(!wallet)return;
+
+const mining=
+Boolean(wallet.mining_started_at);
+
+const amount=
+getMiningAmount();
+
+const balance=
+document.getElementById("miningBalance");
+
+const earn=
+document.getElementById("liveEarn");
+
+const time=
+document.getElementById("timer");
+
+if(balance)
+balance.textContent=
+money(amount)+" NOVA";
+
+if(earn)
+earn.textContent=
+money(amount)+" NOVA";
+
+if(time)
+time.textContent=
+formatTime();
+
+},1000);
+}
+
+async function api(action,extra={}){
+
+const {data,error}=
+await db.functions.invoke(
+"novamine-api",
+{
+body:{
+action,
+...extra
+}
+}
+);
+
+if(error)
+throw error;
+
+if(data?.error)
+throw new Error(data.error);
+
+return data;
+}
+
+async function startMining(){
+
+try{
+
+await api("start");
+
+await refreshWallet();
+
+showMessage(
+"Mining started successfully ⚡"
+);
+
+}catch(e){
+showMessage(
+e.message||"Unable to start mining",
+"error"
+);
+}
+}
+
+async function stopMining(){
+
+try{
+
+await api("stop");
+
+await refreshWallet();
+
+showMessage(
+"Mining stopped and saved."
+);
+
+}catch(e){
+showMessage(
+e.message||"Unable to stop mining",
+"error"
+);
+}
+}
+
+async function claimMining(){
+
+try{
+
+await api("claim");
+
+await refreshWallet();
+
+showMessage(
+"Mining balance claimed into your NOVA wallet 💰"
+);
+
+}catch(e){
+showMessage(
+e.message||"Unable to claim",
+"error"
+);
+}
+}
+
+async function upgrade(level){
+
+const names={
+1:"Basic Worker",
+2:"Power Worker",
+3:"Diamond Worker"
+};
+
+const costs={
+1:.5,
+2:1.5,
+3:5
+};
+
+if(!confirm(
+"Upgrade to "+names[level]+
+" for "+costs[level]+" NOVA?"
+))return;
+
+try{
+
+await api("upgrade",{level});
+
+await refreshWallet();
+
+showMessage(
+names[level]+" purchased successfully ⚡"
+);
+
+}catch(e){
+showMessage(
+e.message||"Upgrade failed",
+"error"
+);
+}
+}
+
+async function convertNOVA(){
+
+const input=
+document.getElementById("convertAmount");
+
+const amount=
+Number(input.value);
+
+if(!amount || amount<=0){
+showMessage(
+"Enter a valid NOVA amount.",
+"error"
+);
+return;
+}
+
+if(amount>Number(wallet.nova_balance||0)){
+showMessage(
+"Conversion amount is greater than your NOVA balance.",
+"error"
+);
+return;
+}
+
+try{
+
+await api("convert",{amount});
+
+input.value="";
+
+await refreshWallet();
+
+showMessage(
+"Conversion successful. USDT balance updated."
+);
+
+}catch(e){
+showMessage(
+e.message||"Conversion failed",
+"error"
+);
+}
+}
+
+async function withdrawUSDT(){
+
+const amount=
+Number(
+document.getElementById("withdrawAmount").value
+);
+
+const address=
+document.getElementById("withdrawWallet").value.trim();
+
+if(!amount || amount<3){
+showMessage(
+"Minimum withdrawal is $3 USDT.",
+"error"
+);
+return;
+}
+
+if(amount>Number(wallet.usdt_balance||0)){
+showMessage(
+"Withdrawal amount is greater than your USDT balance.",
+"error"
+);
+return;
+}
+
+if(address.length<8){
+showMessage(
+"Enter a valid USDT wallet address.",
+"error"
+);
+return;
+}
+
+if(!confirm(
+"Request withdrawal of $"+
+amount.toFixed(2)+" USDT?"
+))return;
+
+try{
+
+await api("withdraw",{
+amount,
+wallet_address:address
+});
+
+document.getElementById("withdrawAmount").value="";
+document.getElementById("withdrawWallet").value="";
+
+await refreshWallet();
+
+showMessage(
+"Withdrawal request submitted successfully."
+);
+
+}catch(e){
+showMessage(
+e.message||"Withdrawal failed",
+"error"
+);
+}
+}
+
+async function copyReferral(){
+
+const link=referralLink();
+
+try{
+
+await navigator.clipboard.writeText(link);
+
+showMessage(
+"Invite link copied 📋"
+);
+
+}catch(e){
+
+const box=document.getElementById("refLink");
+
+const range=
+document.createRange();
+
+range.selectNodeContents(box);
+
+const selection=
+window.getSelection();
+
+selection.removeAllRanges();
+selection.addRange(range);
+
+showMessage(
+"Select and copy the highlighted link."
+);
+}
+}
+
+async function refreshWallet(){
+
+const {data,error}=
+await db.from("wallets")
+.select("*")
+.eq("user_id",user.id)
+.single();
+
+if(error){
+console.error(error);
+return;
+}
+
+wallet=data;
+
+render();
+startDisplayTimer();
+}
+
+async function logout(){
+
+clearInterval(timer);
+
+await db.auth.signOut();
+
+location.href="account.html";
+}
+
+loadUser();
 </script>
 
 </body>
